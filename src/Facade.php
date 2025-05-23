@@ -1,6 +1,6 @@
 <?php
 
-namespace Murrant\LibrenmsExamplePlugin;
+namespace KafkaStore\LibrenmsKafkaStorePlugin;
 
 class Facade extends \Illuminate\Support\Facades\Facade
 {

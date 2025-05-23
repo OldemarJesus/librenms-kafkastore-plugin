@@ -1,6 +1,6 @@
 <?php
 
-namespace Murrant\LibrenmsExamplePlugin\Hooks;
+namespace KafkaStore\LibrenmsKafkaStorePlugin\Hooks;
 
 use LibreNMS\Interfaces\Plugins\Hooks\MenuEntryHook;
 

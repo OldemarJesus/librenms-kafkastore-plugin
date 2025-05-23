@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Murrant\LibrenmsExamplePlugin\Controllers\ExamplePageController;
-use Murrant\LibrenmsExamplePlugin\Controllers\ImageController;
+use KafkaStore\LibrenmsKafkaStorePlugin\Controllers\ImageController;
+use KafkaStore\LibrenmsKafkaStorePlugin\Controllers\KafkaStorePageController;
 
 Route::middleware(['web', 'auth'])->group(function (): void {
-    Route::get('plugin/example-page', [ExamplePageController::class, 'index']);
-    Route::get('plugin/example-page/images/{image}', ImageController::class)->name('example-plugin.image');
+    Route::get('plugin/kafkastore-page', [KafkaStorePageController::class, 'index'])->name('kafkastore-plugin.page');
+    Route::get('plugin/kafkastore-page/images/{image}', ImageController::class)->name('kafkastore-plugin.image');
 });

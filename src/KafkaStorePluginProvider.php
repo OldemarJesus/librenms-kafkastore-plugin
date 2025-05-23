@@ -1,23 +1,23 @@
 <?php
 
-namespace Murrant\LibrenmsExamplePlugin;
+namespace KafkaStore\LibrenmsKafkaStorePlugin;
 
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\ServiceProvider;
+use KafkaStore\LibrenmsKafkaStorePlugin\Hooks\MenuEntry;
+use KafkaStore\LibrenmsKafkaStorePlugin\Hooks\Settings;
 use LibreNMS\Interfaces\Plugins\Hooks\MenuEntryHook;
 use LibreNMS\Interfaces\Plugins\Hooks\SettingsHook;
 use LibreNMS\Interfaces\Plugins\PluginManagerInterface;
-use Murrant\LibrenmsExamplePlugin\Hooks\MenuEntry;
-use Murrant\LibrenmsExamplePlugin\Hooks\Settings;
 
-class ExamplePluginProvider extends ServiceProvider
+class KafkaStorePluginProvider extends ServiceProvider
 {
     /**
      * Bootstrap any package services.
      */
     public function boot(PluginManagerInterface $pluginManager): void
     {
-        $pluginName = 'example-plugin';
+        $pluginName = 'kafkastore-plugin';
 
         // register hooks with LibreNMS (if any are desired)
         // if no hooks are defined, LibreNMS may delete the plugin from the ui
@@ -35,8 +35,8 @@ class ExamplePluginProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', $pluginName);
 
         $this->publishes([
-            // __DIR__.'/../public' => public_path('vendor/example-plugin'), // files that can be published publicly
-            __DIR__.'/../config/config.php' => config_path('example-plugin.php'),
+            // __DIR__.'/../public' => public_path('vendor/kafka-store-plugin'), // files that can be published publicly
+            __DIR__.'/../config/config.php' => config_path('kafkastore-plugin.php'),
         ]);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Murrant\LibrenmsExamplePlugin\Hooks;
+namespace KafkaStore\LibrenmsKafkaStorePlugin\Hooks;
 
 use Illuminate\Foundation\Auth\User;
 use LibreNMS\Interfaces\Plugins\Hooks\SettingsHook;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Murrant\LibrenmsExamplePlugin\Controllers;
+namespace KafkaStore\LibrenmsKafkaStorePlugin\Controllers;
 
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;

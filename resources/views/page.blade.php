@@ -1,6 +1,6 @@
 @extends('layouts.librenmsv1')
 
 @section('content')
-    Hello
+    Welcome to the Kafka Store Plugin for LibreNMS!
 
 @endsection

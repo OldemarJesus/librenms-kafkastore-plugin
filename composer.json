@@ -1,22 +1,23 @@
 {
-    "name": "murrant/librenms-example-plugin",
-    "description": "LibreNMS example plugin",
+    "name": "oldemarjesus/librenms-kafkastore-plugin",
+    "description": "LibreNMS Kafka Store plugin",
     "keywords": [
         "librenms",
         "plugin",
-        "plugin example"
+        "kafka",
+        "store"
     ],
     "type": "package",
     "license": "MIT",
     "authors": [
         {
-            "name": "Tony Murray",
-            "email": "murraytony@gmail.com"
+            "name": "Oldemar Jesus",
+            "email": "oldemego@gmail.com"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Murrant\\LibrenmsExamplePlugin\\": "src/"
+            "KafkaStore\\LibrenmsKafkaStorePlugin\\": "src/"
         },
         "files": [
             "./helpers.php"
@@ -24,7 +25,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Murrant\\LibrenmsExamplePlugin\\Tests\\": "tests"
+            "KafkaStore\\LibrenmsKafkaStorePlugin\\Tests\\": "tests"
         }
     },
     "require": {
@@ -45,10 +46,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Murrant\\LibrenmsExamplePlugin\\ExamplePluginProvider"
+                "KafkaStore\\LibrenmsKafkaStorePlugin\\KafkaStorePluginProvider"
             ],
             "aliases": {
-                "ExamplePlugin": "Murrant\\LibrenmsExamplePlugin\\Facade"
+                "KafkaStore": "KafkaStore\\LibrenmsKafkaStorePlugin\\Facade"
             }
         }
     },
