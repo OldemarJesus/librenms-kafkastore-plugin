@@ -2,14 +2,14 @@
 
 namespace KafkaStore\LibrenmsKafkaStorePlugin\Controllers;
 
-use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Validation\ValidationException;
 
 class KafkaStoreController extends Controller
 {
-    public function saveConfig(Request $request)
+    public function saveConfig(Request $request): RedirectResponse
     {
         try {
             // Validate the request data
@@ -30,14 +30,13 @@ class KafkaStoreController extends Controller
                 'kafka_linger' => 'integer|min:0',
                 'kafka_required_ack' => 'integer|in:-1,0',
                 'kafka_debug_enabled' => 'boolean',
-                'kafka_security_debug' => 'nullable|string'
+                'kafka_security_debug' => 'nullable|string',
             ]);
             // Logic to save configuration settings
             // TODO: Implement actual configuration saving logic here
-            
+
             // Redirect back with success message
             return redirect()->back()->with('status', 'Configuration saved successfully!');
-            
         } catch (ValidationException $e) {
             // Validation failed - Laravel automatically redirects back with errors
             // But we can also manually handle it if needed
@@ -49,7 +48,7 @@ class KafkaStoreController extends Controller
             // Handle any other exceptions
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'An error occurred while saving the configuration: ' . $e->getMessage());
+                ->with('error', 'An error occurred while saving the configuration: '.$e->getMessage());
         }
     }
 }

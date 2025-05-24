@@ -79,7 +79,9 @@
             "ln -sf $PWD/hooks/pre-commit .git/hooks/pre-commit",
             "chmod +x .git/hooks/pre-commit",
             "ln -sf $PWD/hooks/pre-push .git/hooks/pre-push",
-            "chmod +x .git/hooks/pre-push"
+            "chmod +x .git/hooks/pre-push",
+            "ln -sf $PWD/hooks/common.sh .git/hooks/common.sh",
+            "chmod +x .git/hooks/common.sh"
         ],
         "hook:pre-commit": [
             "hooks/pre-commit"

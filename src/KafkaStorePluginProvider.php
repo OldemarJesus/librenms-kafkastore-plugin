@@ -27,7 +27,6 @@ class KafkaStorePluginProvider extends ServiceProvider
             return; // if plugin is disabled, don't boot
         }
 
-
         AboutCommand::add('Kafka Store Plugin', fn (): array => ['Version' => '1.0.0']);
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', $pluginName);
