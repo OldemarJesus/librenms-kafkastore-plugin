@@ -11,4 +11,9 @@ class KafkaStorePageController extends Controller
     {
         return view('kafkastore-plugin::page');
     }
+
+    public function settings(): View
+    {
+        return view('kafkastore-plugin::settings');
+    }
 }

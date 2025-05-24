@@ -29,7 +29,7 @@ class KafkaStorePluginProvider extends ServiceProvider
             return; // if plugin is disabled, don't boot
         }
 
-        AboutCommand::add('Example Plugin', fn (): array => ['Version' => '1.0.0']);
+        AboutCommand::add('Kafka Store Plugin', fn (): array => ['Version' => '1.0.0']);
 
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->loadViewsFrom(__DIR__.'/../resources/views', $pluginName);
