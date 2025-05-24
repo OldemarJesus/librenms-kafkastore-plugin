@@ -6,25 +6,68 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
+            <!-- Success/Error Messages -->
+            @if (session('status'))
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <i class="fa fa-check-circle"></i> {{ session('status') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <i class="fa fa-exclamation-circle"></i> {{ session('error') }}
+                </div>
+            @endif
+
+            <!-- Validation Errors -->
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4><i class="fa fa-exclamation-triangle"></i> Validation Errors</h4>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         <i class="fa fa-cogs"></i> Kafka Datastore Configuration
+                        <span class="pull-right">
+                            <a href="https://github.com/confluentinc/librdkafka/blob/master/CONFIGURATION.md" 
+                               target="_blank" 
+                               class="btn btn-xs btn-default" 
+                               data-toggle="tooltip" 
+                               data-placement="left" 
+                               title="Click to view the complete Kafka configuration reference documentation">
+                                <i class="fa fa-question-circle"></i> Configuration Reference
+                            </a>
+                        </span>
                     </h3>
                 </div>
                 <div class="panel-body">
-                    <form method="POST" action="" class="form-horizontal">
+                    <form method="POST" action="{{ route('kafka-store.save-config') }}" class="form-horizontal">
                         @csrf
-                        
                         <!-- Enable/Disable Kafka -->
                         <div class="form-group">
-                            <label for="kafka_enable" class="col-sm-3 control-label">Enable Kafka Datastore</label>
+                            <label for="kafka_enabled" class="col-sm-3 control-label">Enable Kafka Datastore</label>
                             <div class="col-sm-9">
                                 <input type="checkbox" 
-                                       id="kafka_enable" 
-                                       name="kafka_enable" 
-                                       value="1" 
-                                       {{ ($settings['kafka_enable'] ?? false) ? 'checked' : '' }}>
+                                       id="kafka_enabled" 
+                                       name="kafka_enabled" 
+                                       value="{{ ($settings['kafka_enabled'] ?? false) ? 1 : '0' }}" 
+                                       {{ ($settings['kafka_enabled'] ?? false) ? 'checked' : '' }}>
                                 <span class="help-block">Enable sending metrics to Kafka</span>
                             </div>
                         </div>
@@ -43,6 +86,48 @@
                             </div>
                         </div>
 
+                        <!-- Device Field Exclusions -->
+                        <div class="form-group">
+                            <label for="kafka_device_fields" class="col-sm-3 control-label">Device Field Exclusions</label>
+                            <div class="col-sm-9">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="kafka_device_fields" 
+                                       name="kafka_device_fields" 
+                                       value="{{ $settings['kafka_device_fields'] ?? '' }}"
+                                       placeholder="field1,field2">
+                                <span class="help-block">Comma-separated list of device fields to exclude from Kafka</span>
+                            </div>
+                        </div>
+
+                        <!-- Device Groups Exclusions -->
+                        <div class="form-group">
+                            <label for="kafka_device_groups" class="col-sm-3 control-label">Device Groups Exclusions</label>
+                            <div class="col-sm-9">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="kafka_device_groups" 
+                                       name="kafka_device_groups" 
+                                       value="{{ $settings['kafka_device_groups'] ?? '' }}"
+                                       placeholder="group1,group2">
+                                <span class="help-block">Comma-separated list of device groups to exclude from Kafka</span>
+                            </div>
+                        </div>
+
+                        <!-- Device Measurement Exclusions -->
+                        <div class="form-group">
+                            <label for="kafka_device_measurements" class="col-sm-3 control-label">Device Measurement Exclusions</label>
+                            <div class="col-sm-9">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="kafka_device_measurements" 
+                                       name="kafka_device_measurements" 
+                                       value="{{ $settings['kafka_device_measurements'] ?? '' }}"
+                                       placeholder="measurement1,measurement2">
+                                <span class="help-block">Comma-separated list of device measurements to exclude from Kafka</span>
+                            </div>
+                        </div>
+
                         <!-- Kafka Topic -->
                         <div class="form-group">
                             <label for="kafka_topic" class="col-sm-3 control-label">Kafka Topic</label>
@@ -57,141 +142,160 @@
                             </div>
                         </div>
 
-                        <!-- SSL Configuration -->
+                        <!-- Kafka Idempotence Enable/Disable -->
                         <div class="form-group">
-                            <label for="kafka_ssl_enable" class="col-sm-3 control-label">Enable SSL/TLS</label>
+                            <label for="kafka_idempotency" class="col-sm-3 control-label">Enable Idempotence</label>
                             <div class="col-sm-9">
                                 <input type="checkbox" 
-                                       id="kafka_ssl_enable" 
-                                       name="kafka_ssl_enable" 
+                                       id="kafka_idempotency" 
+                                       name="kafka_idempotency" 
                                        value="1" 
-                                       {{ ($settings['kafka_ssl_enable'] ?? false) ? 'checked' : '' }}>
+                                       {{ ($settings['kafka_idempotency'] ?? false) ? 'checked' : '' }}>
+                                <span class="help-block">Enable idempotence for Kafka producers</span>
+                            </div>
+                        </div>
+
+                        <!-- SSL Configuration -->
+                        <div class="form-group">
+                            <label for="kafka_ssl_enabled" class="col-sm-3 control-label">Enable SSL/TLS</label>
+                            <div class="col-sm-9">
+                                <input type="checkbox" 
+                                       id="kafka_ssl_enabled" 
+                                       name="kafka_ssl_enabled" 
+                                       value="1" 
+                                       {{ ($settings['kafka_ssl_enabled'] ?? false) ? 'checked' : '' }}>
                                 <span class="help-block">Enable SSL/TLS encryption for Kafka connection</span>
                             </div>
                         </div>
 
-                        <!-- SSL Certificate Path -->
-                        <div class="form-group ssl-config" style="{{ ($settings['kafka_ssl_enable'] ?? false) ? '' : 'display: none;' }}">
-                            <label for="kafka_ssl_ca_cert" class="col-sm-3 control-label">CA Certificate Path</label>
+                        <!-- SSL Keystore Certificate Path -->
+                        <div class="form-group ssl-config" style="{{ ($settings['kafka_ssl_enabled'] ?? false) ? '' : 'display: none;' }}">
+                            <label for="kafka_ssl_keystore_location" class="col-sm-3 control-label">Kafka Client Keystore Location</label>
                             <div class="col-sm-9">
                                 <input type="text" 
                                        class="form-control" 
-                                       id="kafka_ssl_ca_cert" 
-                                       name="kafka_ssl_ca_cert" 
-                                       value="{{ $settings['kafka_ssl_ca_cert'] ?? '' }}"
-                                       placeholder="/path/to/ca-cert.pem">
-                                <span class="help-block">Path to CA certificate file</span>
+                                       id="kafka_ssl_keystore_location" 
+                                       name="kafka_ssl_keystore_location" 
+                                       value="{{ $settings['kafka_ssl_keystore_location'] ?? '' }}"
+                                       placeholder="/path/to/keystore.jks">
+                                <span class="help-block">Path to Kafka client keystore file</span>
                             </div>
                         </div>
 
-                        <!-- SSL Client Certificate -->
-                        <div class="form-group ssl-config" style="{{ ($settings['kafka_ssl_enable'] ?? false) ? '' : 'display: none;' }}">
-                            <label for="kafka_ssl_cert" class="col-sm-3 control-label">Client Certificate Path</label>
-                            <div class="col-sm-9">
-                                <input type="text" 
-                                       class="form-control" 
-                                       id="kafka_ssl_cert" 
-                                       name="kafka_ssl_cert" 
-                                       value="{{ $settings['kafka_ssl_cert'] ?? '' }}"
-                                       placeholder="/path/to/client-cert.pem">
-                                <span class="help-block">Path to client certificate file (optional)</span>
-                            </div>
-                        </div>
-
-                        <!-- SSL Client Key -->
-                        <div class="form-group ssl-config" style="{{ ($settings['kafka_ssl_enable'] ?? false) ? '' : 'display: none;' }}">
-                            <label for="kafka_ssl_key" class="col-sm-3 control-label">Client Key Path</label>
-                            <div class="col-sm-9">
-                                <input type="text" 
-                                       class="form-control" 
-                                       id="kafka_ssl_key" 
-                                       name="kafka_ssl_key" 
-                                       value="{{ $settings['kafka_ssl_key'] ?? '' }}"
-                                       placeholder="/path/to/client-key.pem">
-                                <span class="help-block">Path to client private key file (optional)</span>
-                            </div>
-                        </div>
-
-                        <!-- SASL Authentication -->
-                        <div class="form-group">
-                            <label for="kafka_sasl_enable" class="col-sm-3 control-label">Enable SASL Authentication</label>
-                            <div class="col-sm-9">
-                                <input type="checkbox" 
-                                       id="kafka_sasl_enable" 
-                                       name="kafka_sasl_enable" 
-                                       value="1" 
-                                       {{ ($settings['kafka_sasl_enable'] ?? false) ? 'checked' : '' }}>
-                                <span class="help-block">Enable SASL authentication for Kafka</span>
-                            </div>
-                        </div>
-
-                        <!-- SASL Mechanism -->
-                        <div class="form-group sasl-config" style="{{ ($settings['kafka_sasl_enable'] ?? false) ? '' : 'display: none;' }}">
-                            <label for="kafka_sasl_mechanism" class="col-sm-3 control-label">SASL Mechanism</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="kafka_sasl_mechanism" name="kafka_sasl_mechanism">
-                                    <option value="PLAIN" {{ ($settings['kafka_sasl_mechanism'] ?? 'PLAIN') == 'PLAIN' ? 'selected' : '' }}>PLAIN</option>
-                                    <option value="SCRAM-SHA-256" {{ ($settings['kafka_sasl_mechanism'] ?? '') == 'SCRAM-SHA-256' ? 'selected' : '' }}>SCRAM-SHA-256</option>
-                                    <option value="SCRAM-SHA-512" {{ ($settings['kafka_sasl_mechanism'] ?? '') == 'SCRAM-SHA-512' ? 'selected' : '' }}>SCRAM-SHA-512</option>
-                                    <option value="GSSAPI" {{ ($settings['kafka_sasl_mechanism'] ?? '') == 'GSSAPI' ? 'selected' : '' }}>GSSAPI</option>
-                                </select>
-                                <span class="help-block">SASL authentication mechanism</span>
-                            </div>
-                        </div>
-
-                        <!-- SASL Username -->
-                        <div class="form-group sasl-config" style="{{ ($settings['kafka_sasl_enable'] ?? false) ? '' : 'display: none;' }}">
-                            <label for="kafka_sasl_username" class="col-sm-3 control-label">SASL Username</label>
-                            <div class="col-sm-9">
-                                <input type="text" 
-                                       class="form-control" 
-                                       id="kafka_sasl_username" 
-                                       name="kafka_sasl_username" 
-                                       value="{{ $settings['kafka_sasl_username'] ?? '' }}"
-                                       placeholder="kafka-user">
-                                <span class="help-block">SASL username</span>
-                            </div>
-                        </div>
-
-                        <!-- SASL Password -->
-                        <div class="form-group sasl-config" style="{{ ($settings['kafka_sasl_enable'] ?? false) ? '' : 'display: none;' }}">
-                            <label for="kafka_sasl_password" class="col-sm-3 control-label">SASL Password</label>
+                        <!-- SSL Keystore Certificate Credential -->
+                        <div class="form-group ssl-config" style="{{ ($settings['kafka_ssl_enabled'] ?? false) ? '' : 'display: none;' }}">
+                            <label for="kafka_ssl_keystore_password" class="col-sm-3 control-label">Kafka Client Keystore Password</label>
                             <div class="col-sm-9">
                                 <input type="password" 
                                        class="form-control" 
-                                       id="kafka_sasl_password" 
-                                       name="kafka_sasl_password" 
-                                       value="{{ $settings['kafka_sasl_password'] ?? '' }}"
-                                       placeholder="password">
-                                <span class="help-block">SASL password</span>
+                                       id="kafka_ssl_keystore_password" 
+                                       name="kafka_ssl_keystore_password" 
+                                       value="{{ $settings['kafka_ssl_keystore_password'] ?? '' }}"
+                                       placeholder="keystore-password">
+                                <span class="help-block">Password for Kafka client keystore (optional)</span>
                             </div>
                         </div>
 
-                        <!-- Message Format -->
+                        <!-- Batch Max Size -->
                         <div class="form-group">
-                            <label for="kafka_message_format" class="col-sm-3 control-label">Message Format</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="kafka_message_format" name="kafka_message_format">
-                                    <option value="json" {{ ($settings['kafka_message_format'] ?? 'json') == 'json' ? 'selected' : '' }}>JSON</option>
-                                    <option value="influxdb" {{ ($settings['kafka_message_format'] ?? '') == 'influxdb' ? 'selected' : '' }}>InfluxDB Line Protocol</option>
-                                    <option value="prometheus" {{ ($settings['kafka_message_format'] ?? '') == 'prometheus' ? 'selected' : '' }}>Prometheus Format</option>
-                                </select>
-                                <span class="help-block">Format for metrics messages sent to Kafka</span>
-                            </div>
-                        </div>
-
-                        <!-- Batch Size -->
-                        <div class="form-group">
-                            <label for="kafka_batch_size" class="col-sm-3 control-label">Batch Size</label>
+                            <label for="kafka_batch_size" class="col-sm-3 control-label">Batch Max Size</label>
                             <div class="col-sm-9">
                                 <input type="number" 
                                        class="form-control" 
                                        id="kafka_batch_size" 
                                        name="kafka_batch_size" 
-                                       value="{{ $settings['kafka_batch_size'] ?? 100 }}"
+                                       value="{{ $settings['kafka_batch_size'] ?? 25 }}"
                                        min="1" 
                                        max="10000">
                                 <span class="help-block">Number of metrics to batch before sending to Kafka</span>
+                            </div>
+                        </div>
+
+                        <!-- Buffer Max Size -->
+                        <div class="form-group">
+                            <label for="kafka_buffer_max_size" class="col-sm-3 control-label">Buffer Max Size</label>
+                            <div class="col-sm-9">
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="kafka_buffer_max_size" 
+                                       name="kafka_buffer_max_size" 
+                                       value="{{ $settings['kafka_buffer_max_size'] ?? 100000 }}"
+                                       min="1" 
+                                       max="100000000">
+                                <span class="help-block">Maximum size of the buffer for metrics before sending to Kafka</span>
+                            </div>
+                        </div>
+
+                        <!-- Kafka Flush Timeout -->
+                        <div class="form-group">
+                            <label for="kafka_flush_timeout" class="col-sm-3 control-label">Kafka Flush Timeout</label>
+                            <div class="col-sm-9">
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="kafka_flush_timeout" 
+                                       name="kafka_flush_timeout" 
+                                       value="{{ $settings['kafka_flush_timeout'] ?? 50 }}"
+                                       min="1" 
+                                       max="60000">
+                                <span class="help-block">Maximum time to wait for flushing messages to Kafka (in milliseconds)</span>
+                            </div>
+                        </div>
+
+                        <!-- Kafka Linger -->
+                        <div class="form-group">
+                            <label for="kafka_linger" class="col-sm-3 control-label">Kafka Linger</label>
+                            <div class="col-sm-9">
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="kafka_linger" 
+                                       name="kafka_linger" 
+                                       value="{{ $settings['kafka_linger'] ?? 500 }}"
+                                       min="0" 
+                                       max="10000">
+                                <span class="help-block">Maximum linger (in milliseconds)</span>
+                            </div>
+                        </div>
+
+                        <!-- Kafka Required Acknowledgment -->
+                        <div class="form-group">
+                            <label for="kafka_required_ack" class="col-sm-3 control-label">Kafka Required Acknowledgment</label>
+                            <div class="col-sm-9">
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="kafka_required_ack" 
+                                       name="kafka_required_ack" 
+                                       value="{{ $settings['kafka_required_ack'] ?? -1 }}"
+                                       min="-1" 
+                                       max="0"
+                                       step="1">
+                                <span class="help-block">0=Broker does not send any response/ack to client | -1 or all=Broker will block until message is committed by all in sync replicas (ISRs)</span>
+                            </div>
+                        </div>
+
+                        <!-- Enable/Disable Kafka Debug Mode -->
+                        <div class="form-group">
+                            <label for="kafka_debug_enabled" class="col-sm-3 control-label">Enable Kafka Debug Mode</label>
+                            <div class="col-sm-9">
+                                <input type="checkbox" 
+                                       id="kafka_debug_enabled" 
+                                       name="kafka_debug_enabled" 
+                                       value="1" 
+                                       {{ ($settings['kafka_debug_enabled'] ?? false) ? 'checked' : '' }}>
+                                <span class="help-block">Enable logging debug information from comunication with Kafka</span>
+                            </div>
+                        </div>
+
+                        <!-- Kafka Security Comunication Debug -->
+                        <div class="form-group">
+                            <label for="kafka_security_debug" class="col-sm-3 control-label">Kafka Security Debug Flag</label>
+                            <div class="col-sm-9">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="kafka_security_debug" 
+                                       name="kafka_security_debug" 
+                                       value="{{ $settings['kafka_security_debug'] ?? '' }}"
+                                       placeholder="generic, broker, topic, metadata, feature, queue, msg, protocol, cgrp, security, fetch, interceptor, plugin, consumer, admin, eos, mock, assignor, conf, telemetry, all">
+                                <span class="help-block">Kafka Security Debug Flag</span>
                             </div>
                         </div>
 
@@ -222,24 +326,18 @@
 
 <script>
 $(document).ready(function() {
-    // Toggle SSL configuration fields
-    $('#kafka_ssl_enable').change(function() {
+    // Initialize tooltips
+    $('[data-toggle="tooltip"]').tooltip();
+
+    // Toggle SSL configuration fields based on checkbox state
+    $('#kafka_ssl_enabled').change(function() {
         if ($(this).is(':checked')) {
             $('.ssl-config').show();
         } else {
             $('.ssl-config').hide();
         }
     });
-
-    // Toggle SASL configuration fields
-    $('#kafka_sasl_enable').change(function() {
-        if ($(this).is(':checked')) {
-            $('.sasl-config').show();
-        } else {
-            $('.sasl-config').hide();
-        }
-    });
-
+    
     // Test connection functionality
     $('#test-connection').click(function() {
         var button = $(this);
