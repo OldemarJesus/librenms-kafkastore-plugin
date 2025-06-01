@@ -43,7 +43,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
-                        <i class="fa fa-cogs"></i> Kafka Datastore Configuration
+                        <i class="fa fa-cogs"></i> Kafka Datastore Configuration (Read Only)
                         <span class="pull-right">
                             <a href="https://github.com/confluentinc/librdkafka/blob/master/CONFIGURATION.md" 
                                target="_blank" 
@@ -57,16 +57,15 @@
                     </h3>
                 </div>
                 <div class="panel-body">
-                    <form method="POST" action="{{ route('kafka-store.save-config') }}" class="form-horizontal">
-                        @csrf
+                    <form class="form-horizontal">
                         <!-- Enable/Disable Kafka -->
                         <div class="form-group">
                             <label for="kafka_enabled" class="col-sm-3 control-label">Enable Kafka Datastore</label>
                             <div class="col-sm-9">
                                 <input type="checkbox" 
                                        id="kafka_enabled" 
-                                       name="kafka_enabled" 
-                                       value="{{ ($settings['kafka_enabled'] ?? false) ? 1 : '0' }}" 
+                                       name="kafka_enabled"
+                                       disabled
                                        {{ ($settings['kafka_enabled'] ?? false) ? 'checked' : '' }}>
                                 <span class="help-block">Enable sending metrics to Kafka</span>
                             </div>
@@ -81,7 +80,8 @@
                                        id="kafka_brokers" 
                                        name="kafka_brokers" 
                                        value="{{ $settings['kafka_brokers'] ?? 'localhost:9092' }}"
-                                       placeholder="broker1:9092,broker2:9092">
+                                       placeholder="broker1:9092,broker2:9092"
+                                       readonly>
                                 <span class="help-block">Comma-separated list of Kafka broker addresses</span>
                             </div>
                         </div>
@@ -95,7 +95,8 @@
                                        id="kafka_device_fields" 
                                        name="kafka_device_fields" 
                                        value="{{ $settings['kafka_device_fields'] ?? '' }}"
-                                       placeholder="field1,field2">
+                                       placeholder="field1,field2"
+                                       readonly>
                                 <span class="help-block">Comma-separated list of device fields to exclude from Kafka</span>
                             </div>
                         </div>
@@ -109,7 +110,8 @@
                                        id="kafka_device_groups" 
                                        name="kafka_device_groups" 
                                        value="{{ $settings['kafka_device_groups'] ?? '' }}"
-                                       placeholder="group1,group2">
+                                       placeholder="group1,group2"
+                                       readonly>
                                 <span class="help-block">Comma-separated list of device groups to exclude from Kafka</span>
                             </div>
                         </div>
@@ -123,7 +125,8 @@
                                        id="kafka_device_measurements" 
                                        name="kafka_device_measurements" 
                                        value="{{ $settings['kafka_device_measurements'] ?? '' }}"
-                                       placeholder="measurement1,measurement2">
+                                       placeholder="measurement1,measurement2"
+                                       readonly>
                                 <span class="help-block">Comma-separated list of device measurements to exclude from Kafka</span>
                             </div>
                         </div>
@@ -137,7 +140,8 @@
                                        id="kafka_topic" 
                                        name="kafka_topic" 
                                        value="{{ $settings['kafka_topic'] ?? 'librenms-metrics' }}"
-                                       placeholder="librenms-metrics">
+                                       placeholder="librenms-metrics"
+                                       readonly>
                                 <span class="help-block">Topic name for LibreNMS metrics</span>
                             </div>
                         </div>
@@ -150,6 +154,7 @@
                                        id="kafka_idempotency" 
                                        name="kafka_idempotency" 
                                        value="1" 
+                                       disabled
                                        {{ ($settings['kafka_idempotency'] ?? false) ? 'checked' : '' }}>
                                 <span class="help-block">Enable idempotence for Kafka producers</span>
                             </div>
@@ -163,6 +168,7 @@
                                        id="kafka_ssl_enabled" 
                                        name="kafka_ssl_enabled" 
                                        value="1" 
+                                       disabled
                                        {{ ($settings['kafka_ssl_enabled'] ?? false) ? 'checked' : '' }}>
                                 <span class="help-block">Enable SSL/TLS encryption for Kafka connection</span>
                             </div>
@@ -177,7 +183,8 @@
                                        id="kafka_ssl_keystore_location" 
                                        name="kafka_ssl_keystore_location" 
                                        value="{{ $settings['kafka_ssl_keystore_location'] ?? '' }}"
-                                       placeholder="/path/to/keystore.jks">
+                                       placeholder="/path/to/keystore.jks"
+                                       readonly>
                                 <span class="help-block">Path to Kafka client keystore file</span>
                             </div>
                         </div>
@@ -191,7 +198,8 @@
                                        id="kafka_ssl_keystore_password" 
                                        name="kafka_ssl_keystore_password" 
                                        value="{{ $settings['kafka_ssl_keystore_password'] ?? '' }}"
-                                       placeholder="keystore-password">
+                                       placeholder="keystore-password"
+                                       readonly>
                                 <span class="help-block">Password for Kafka client keystore (optional)</span>
                             </div>
                         </div>
@@ -206,7 +214,8 @@
                                        name="kafka_batch_size" 
                                        value="{{ $settings['kafka_batch_size'] ?? 25 }}"
                                        min="1" 
-                                       max="10000">
+                                       max="10000"
+                                       readonly>
                                 <span class="help-block">Number of metrics to batch before sending to Kafka</span>
                             </div>
                         </div>
@@ -221,7 +230,8 @@
                                        name="kafka_buffer_max_size" 
                                        value="{{ $settings['kafka_buffer_max_size'] ?? 100000 }}"
                                        min="1" 
-                                       max="100000000">
+                                       max="100000000"
+                                       readonly>
                                 <span class="help-block">Maximum size of the buffer for metrics before sending to Kafka</span>
                             </div>
                         </div>
@@ -236,7 +246,8 @@
                                        name="kafka_flush_timeout" 
                                        value="{{ $settings['kafka_flush_timeout'] ?? 50 }}"
                                        min="1" 
-                                       max="60000">
+                                       max="60000"
+                                       readonly>
                                 <span class="help-block">Maximum time to wait for flushing messages to Kafka (in milliseconds)</span>
                             </div>
                         </div>
@@ -251,7 +262,8 @@
                                        name="kafka_linger" 
                                        value="{{ $settings['kafka_linger'] ?? 500 }}"
                                        min="0" 
-                                       max="10000">
+                                       max="10000"
+                                       readonly>
                                 <span class="help-block">Maximum linger (in milliseconds)</span>
                             </div>
                         </div>
@@ -267,7 +279,8 @@
                                        value="{{ $settings['kafka_required_ack'] ?? -1 }}"
                                        min="-1" 
                                        max="0"
-                                       step="1">
+                                       step="1"
+                                       readonly>
                                 <span class="help-block">0=Broker does not send any response/ack to client | -1 or all=Broker will block until message is committed by all in sync replicas (ISRs)</span>
                             </div>
                         </div>
@@ -280,6 +293,7 @@
                                        id="kafka_debug_enabled" 
                                        name="kafka_debug_enabled" 
                                        value="1" 
+                                       disabled
                                        {{ ($settings['kafka_debug_enabled'] ?? false) ? 'checked' : '' }}>
                                 <span class="help-block">Enable logging debug information from comunication with Kafka</span>
                             </div>
@@ -294,27 +308,9 @@
                                        id="kafka_security_debug" 
                                        name="kafka_security_debug" 
                                        value="{{ $settings['kafka_security_debug'] ?? '' }}"
-                                       placeholder="generic, broker, topic, metadata, feature, queue, msg, protocol, cgrp, security, fetch, interceptor, plugin, consumer, admin, eos, mock, assignor, conf, telemetry, all">
+                                       placeholder="generic, broker, topic, metadata, feature, queue, msg, protocol, cgrp, security, fetch, interceptor, plugin, consumer, admin, eos, mock, assignor, conf, telemetry, all"
+                                       readonly>
                                 <span class="help-block">Kafka Security Debug Flag</span>
-                            </div>
-                        </div>
-
-                        <!-- Test Connection Button -->
-                        <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-9">
-                                <button type="button" class="btn btn-info" id="test-connection">
-                                    <i class="fa fa-plug"></i> Test Connection
-                                </button>
-                                <div id="test-result" class="alert" style="display: none; margin-top: 10px;"></div>
-                            </div>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-9">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-save"></i> Save Settings
-                                </button>
                             </div>
                         </div>
                     </form>
@@ -328,48 +324,6 @@
 $(document).ready(function() {
     // Initialize tooltips
     $('[data-toggle="tooltip"]').tooltip();
-
-    // Toggle SSL configuration fields based on checkbox state
-    $('#kafka_ssl_enabled').change(function() {
-        if ($(this).is(':checked')) {
-            $('.ssl-config').show();
-        } else {
-            $('.ssl-config').hide();
-        }
-    });
-    
-    // Test connection functionality
-    $('#test-connection').click(function() {
-        var button = $(this);
-        var resultDiv = $('#test-result');
-        
-        button.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Testing...');
-        
-        $.ajax({
-            url: '',
-            method: 'POST',
-            data: $('form').serialize(),
-            success: function(response) {
-                if (response.success) {
-                    resultDiv.removeClass('alert-danger').addClass('alert-success')
-                           .html('<i class="fa fa-check"></i> Connection successful!')
-                           .show();
-                } else {
-                    resultDiv.removeClass('alert-success').addClass('alert-danger')
-                           .html('<i class="fa fa-times"></i> Connection failed: ' + response.message)
-                           .show();
-                }
-            },
-            error: function() {
-                resultDiv.removeClass('alert-success').addClass('alert-danger')
-                       .html('<i class="fa fa-times"></i> Connection test failed')
-                       .show();
-            },
-            complete: function() {
-                button.prop('disabled', false).html('<i class="fa fa-plug"></i> Test Connection');
-            }
-        });
-    });
 });
 </script>
 @endsection

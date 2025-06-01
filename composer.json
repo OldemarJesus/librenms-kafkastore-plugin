@@ -30,6 +30,7 @@
     },
     "require": {
         "php": "^8.2",
+        "idealo/php-rdkafka-ffi": "^0.6.0",
         "librenms/plugin-interfaces": "^1.0"
     },
     "suggest": {
